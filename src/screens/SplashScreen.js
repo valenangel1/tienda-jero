@@ -1,21 +1,20 @@
 import React, {useEffect} from "react";
-import { Text, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import colors from "../constants/colors";
+import colors from "../../src/constants/colors"
 
-import react from "react";
 
 const SplashScreen = () => {
     const navigation = useNavigation();
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            navigation.replace('MainTabs')}, 8000);
+            navigation.replace('Login')}, 8000);
             return () => clearTimeout(timer)
     })
     return (
-        <LinearGradient colors={colors.gradientPrimario} style={styles.container}>
+        <LinearGradient colors={[colors.fondoClaro, colors.fondoOscuro]} style={styles.container}>
             <Image source={ require("../../assets/logo.png")} style={styles.logo}/>
         </LinearGradient>
     )
@@ -28,7 +27,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     logo: {
-        width: 1100,
+        width: 500,
         height: 500,
         resizeMode: 'contain',
     }

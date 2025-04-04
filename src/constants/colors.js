@@ -15,8 +15,8 @@ export default {
 
 
     //colores de fondo
-    fondoClaro: '',
-    fondoOscuro:'',
+    fondoClaro: '#D9EAF7',
+    fondoOscuro: '#A7D2F2',
 
     //colores de alerta o acciones
     exito: '#2ECC71',
@@ -24,7 +24,7 @@ export default {
     advertencia: '#F4A261',
 
     //Gradientes
-    gradientPrimario: ['#09795e','#097951'],
+    gradientPrimario: ['',''],
     gradientSecundario: ['',''],
     gradientAccion: ['','']
 } 

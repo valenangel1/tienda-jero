@@ -1,20 +1,40 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, TabRouter } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+
 import SplashScreen from "../screens/SplashScreen";
-import InicioScreen from "../screens/InicioScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CategoriasScreen from "../screens/CategoriasScreen";
 import MiCuentaScreen from "../screens/MiCuentaScreen";
+import LoginScreen from "../screens/auth/LoginScreen";
+import RegisterScreen from "../screens/auth/RegisterScreen";
+
+
 import App from "../../App";
+import SettingsScreen from "../screens/SettingsScreen";
+
 
 const Tab = createBottomTabNavigator();
 const stack = createStackNavigator();
 
 const TabNavigator = () => {
-    return (<Tab.Navigator initialRouteName="Inicio">
-        <Tab.Screen name="Inicio" component={InicioScreen} options={{}}/>
+    return (<Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({ tabBarIcon:({color, size})=> {
+        let iconName
+        if (route.name==="Mi Cuenta"){
+            iconName = "person-circle-outline"
+        }else if (route.name==="Home"){
+            iconName = "home-outline"
+        }else if (route.name==="Categorias"){
+            iconName = "menu-outline"
+        }
+        return <Ionicons name={iconName} size={size}/>},
+        tabBarActiveColor: "#ffff",
+        tabBarInactiveTintColor: "grey",
+        tabBarStyle: {backgroundColor: "#F8FAFC"}
+    })}>
+        
         <Tab.Screen name="Home" component={HomeScreen} options={{}}/>
         <Tab.Screen name="Categorias" component={CategoriasScreen} options={{}}/>
         <Tab.Screen name="Mi Cuenta" component={MiCuentaScreen} options={{}}/>
@@ -25,6 +45,9 @@ const AppNavigator = () => {
     return (
         <stack.Navigator initialRouteName="Splash">
             <stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}}/>
+            <stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
+            <stack.Screen name="Registro" component={RegisterScreen} options={{headerShown: false}}/>
+            <stack.Screen name="Settings" component={SettingsScreen} options={{headerShown: false}}/>
             <stack.Screen name="MainTabs" component={TabNavigator} options={{headerShown: false}}/>
         </stack.Navigator>
     )
