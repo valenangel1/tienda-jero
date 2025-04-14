@@ -6,6 +6,9 @@ import colors from "../constants/colors";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import EditModal from "../components/EditModal";
+import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
+import { showMessage } from "react-native-flash-message";
+
 
 const SettingsScreen = () => {
     const navigation = useNavigation()
@@ -20,16 +23,44 @@ const SettingsScreen = () => {
             field === 'Nombre' ? user?.displayName || '': 
             field === 'Correo' ? user?.email || '' :
             field === 'Contraseña' ? '' : ''
-        )
+        );
         setModalVisible(true)
-    }
+    };
 
-    const handleSave = () => {
-        console.log(`Nuevo ${modalTitle}:`, fieldValue)
-        if (modalTitle === 'Contraseña'){
-            console.log('Actualizando contraseña...')
+    const handleSave = async () => {
+        try {
+            if (modalTitle === 'Nombre'){
+                await updateProfile(auth.currentUser, { displayName: fieldValue });
+                showMessage({
+                    message: '✅',
+                    description: 'Nombre actualizado correctamente.',
+                    type: 'success',
+                });
+            } else if (modalTitle === 'Correo'){
+                await updateEmail(auth.currentUser, fieldValue);
+                showMessage({
+                    message: '📨',
+                    description: 'Correo actualizado correctamente.',
+                    type: 'success',
+                });
+            } else if (modalTitle === 'Contraseña'){
+                await updatePassword(auth.currentUser, fieldValue);
+                showMessage({
+                    message: '🔐',
+                    description: 'Contraseña actualizada correctamente.',
+                    type: 'success',
+                });
+            }
+        }catch(error){
+            showMessage({
+                message: '❌',
+                description: error.message,
+                type: 'danger',
+            })
         }
-        setModalVisible(false)
+        finally {
+            setModalVisible(false);
+        }
     }
 
     return (
@@ -62,7 +93,12 @@ const SettingsScreen = () => {
                     <Text style={styles.editText}>Editar</Text>
                 </TouchableOpacity>
             </View>
-            <EditModal visible={isModalVisible} title={modalTitle || "Editar"} value={fieldValue} onChangeText={setFieldValue} onSave={handleSave} onCancel={() => setModalVisible(false)}/>
+            <EditModal
+            visible={isModalVisible}
+            title={modalTitle}
+            value={fieldValue}
+            onChangeText={setFieldValue}
+            onSave={handleSave} onCancel={() => setModalVisible(false)}/>
         </LinearGradient>
     )
 }
@@ -79,12 +115,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 20,
         textAlign: "center",
-    },
-    sectionTitle: {
-        fontSize: 18,
-        color: "#333",
-        fontWeight: "bold",
-        marginBottom: 10,
     },
     row: {
         flexDirection: "row",

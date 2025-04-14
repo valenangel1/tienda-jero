@@ -2,7 +2,8 @@ import { getApps, initializeApp } from "firebase/app";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { EXPO_PUBLIC_API_KEY, EXPO_PUBLIC_APP_ID, EXPO_PUBLIC_AUTH_DOMAIN, EXPO_PUBLIC_MEASUREMENT_ID, EXPO_PUBLIC_MESSAGING_SENDER_ID, EXPO_PUBLIC_PROJECT_ID, EXPO_PUBLIC_STORAGE_BUCKET} from "@env";
+import { EXPO_PUBLIC_API_KEY, EXPO_PUBLIC_APP_ID, EXPO_PUBLIC_AUTH_DOMAIN, EXPO_PUBLIC_MEASUREMENT_ID, EXPO_PUBLIC_MESSAGING_SENDER_ID, 
+  EXPO_PUBLIC_PROJECT_ID, EXPO_PUBLIC_STORAGE_BUCKET} from "@env";
 
 const firebaseConfig = {
     apiKey:process.env.EXPO_PUBLIC_API_KEY,
