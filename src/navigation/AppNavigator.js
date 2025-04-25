@@ -10,10 +10,14 @@ import CategoriasScreen from "../screens/CategoriasScreen";
 import MiCuentaScreen from "../screens/MiCuentaScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import RegisterScreen from "../screens/auth/RegisterScreen";
+import CarritoCompras from "../screens/CarritoCompras";
+import PantallaBusqueda from "../screens/PantallaBusqueda";
+import ProductosScreen from "../screens/ProductosScreen";
 
 
 import App from "../../App";
 import SettingsScreen from "../screens/SettingsScreen";
+
 
 
 const Tab = createBottomTabNavigator();
@@ -47,6 +51,9 @@ const AppNavigator = () => {
             <stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}}/>
             <stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
             <stack.Screen name="Registro" component={RegisterScreen} options={{headerShown: false}}/>
+            <stack.Screen name="CarritoCompras" component={CarritoCompras} options={{headerShown: false}}/>
+            <stack.Screen name="PantallaBusqueda" component={PantallaBusqueda} options={{headerShown: false}}/>
+            <stack.Screen name="ProductosScreen" component={ProductosScreen} options={{headerShown: false}}/>
             <stack.Screen name="Settings" component={SettingsScreen} options={{headerShown: false}}/>
             <stack.Screen name="MainTabs" component={TabNavigator} options={{headerShown: false}}/>
         </stack.Navigator>

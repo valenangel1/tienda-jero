@@ -1,5 +1,5 @@
 import React, { useState }from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Button, Alert } from "react-native"
+import { View, Text, StyleSheet, Image, TouchableOpacity, Button, Alert, Modal } from "react-native"
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../constants/colors";
@@ -13,11 +13,11 @@ const MiCuentaScreen = () => {
     const navigation = useNavigation();
     const { user } = useAuth()
     const [profileImage, setProfileImage] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+
 
     const handleLogout = () => {
-        signOut(auth)
-        .then(() => navigation.replace("Login"))
-        .catch((error) => Alert.alert("Error", "No se puede cerrar sesión."))
+        setShowModal(true);
     }
 
     const selectImage = async () => {
@@ -55,6 +55,13 @@ const MiCuentaScreen = () => {
         }
     };
 
+     const confirmLogout = () => {
+        signOut(auth)
+        .then(() => navigation.replace("Login"))
+        .catch(() => Alert.alert("Error", "No se puede cerrar sesión"));
+        setShowModal(false);
+     }
+
     return (
         <LinearGradient colors={[colors.fondoClaro, colors.fondoOscuro]} style={styles.container}>
             <View style={styles.profileContainer}>
@@ -77,6 +84,21 @@ const MiCuentaScreen = () => {
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.logoutText}>Cerrar Sesión</Text>
             </TouchableOpacity>
+            <Modal animationType="slide" transparent={true} visible={showModal} onRequestClose={() => setShowModal(false)}>
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>¿Estás seguro de que deseas cerrar sesión?</Text>
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal(false)}>
+                                <Text style={styles.buttonText}>No</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalButton} onPress={confirmLogout}>
+                                <Text style={[styles.buttonText, { color: "#007bff"}]}>Si</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </LinearGradient>
     );
 };
@@ -125,12 +147,6 @@ const styles = StyleSheet.create({
         color: "#333",
         textAlign: "center",
     },
-    editButton: {
-        marginTop: 15,
-        fontSize: 16,
-        color: "#007bff",
-        fontWeight: "600",
-    },
     logoutButton: {
         marginTop: 30,
         backgroundColor: "#007bff",
@@ -154,6 +170,41 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 16,
         fontWeight: "bold",
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)"
+    },
+    modalContainer: {
+        width: "80%",
+        backgroundColor: "#fff",
+        padding: 20,
+        borderRadius: 10,
+        alignItems: "center",
+        elevation: 5
+    },
+    modalText: {
+        fontSize: 18,
+        textAlign: "center",
+        marginBottom: 20,
+        fontWeight: "bold"
+    },
+    modalButtons: {
+        flexDirection: "row",
+        gap: 20
+    },
+    modalButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        backgroundColor: "#f2f2f2"
+    },
+    buttonText: {
+        fontSize: 16,
     },
 });
 
