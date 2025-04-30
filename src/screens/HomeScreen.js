@@ -1,61 +1,51 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../constants/colors";
 import { Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import CarritoIcono from "../components/CarritoIcono"
+import CarritoIcono from "../components/CarritoIcono";
 import { ProductosPorCategoria } from "../constants/ProductosPorCategoria";
-
 
 const { width: screenWidth } = Dimensions.get("window");
 
-
 const categories = [
     { name: 'Carne', icon: 'cow', screen: 'Carne' },
-    { name: 'Conservas Vegetales', icon: 'food-variant', screen: 'ConservasVegetales'},
-    { name: 'Productos de Limpieza', icon: 'spray-bottle', screen: 'Limpieza'},
+    { name: 'Conservas Vegetales', icon: 'food-variant', screen: 'ConservasVegetales' },
+    { name: 'Productos de Limpieza', icon: 'spray-bottle', screen: 'Limpieza' },
     { name: 'Salsa y Aderezos', icon: 'bottle-soda-classic', screen: 'SalsasAderezos' },
     { name: 'Dulces y Confitería', icon: 'candy', screen: 'Dulces' },
     { name: 'Productos Lácteos', icon: 'cheese', screen: 'Lácteos' },
 ];
 
 const carouselItems = [
-    { title: 'Promocion de Carne', image: require('../../assets/carne.jpg')},
-    { title: 'Oferta de Legumbres', image: require('../../assets/legumbres.jpg')},
-    { title: 'Descuento en Lacteos', image: require('../../assets/lacteos.jpg')},
-    { title: 'Productos de Limpieza', image: require('../../assets/limpieza.jpg')},
-    { title: 'Hortalizas', image: require('../../assets/hortalizas.jpg')},
-    { title: 'Variedad de Mecato', image: require('../../assets/mecato.jpg')}
-
-    
-]
+    { title: 'Promoción de Carne', image: require('../../assets/carne.jpg') },
+    { title: 'Oferta de Legumbres', image: require('../../assets/legumbres.jpg') },
+    { title: 'Descuento en Lácteos', image: require('../../assets/lacteos.jpg') },
+    { title: 'Productos de Limpieza', image: require('../../assets/limpieza.jpg') },
+    { title: 'Hortalizas', image: require('../../assets/hortalizas.jpg') },
+    { title: 'Variedad de Mecato', image: require('../../assets/mecato.jpg') }
+];
 
 const HomeScreen = () => {
-    const navigation =useNavigation();
-    const [searchText, setSearchText] = useState("");
-    const [activeIndex, setActiveIndex] = useState(0)
-    
-
+    const navigation = useNavigation();
+    const [activeIndex, setActiveIndex] = useState(0);
     const productosEnCarrito = [];
 
-    const filteredCategories = categories.filter((item) =>
-    item.name.toLowerCase().includes(searchText.toLowerCase()))
-
     const goToCategory = (screenName) => {
-            const categoriaSeleccionada = ProductosPorCategoria.find((cat) => cat.screen === screenName);
-            if (categoriaSeleccionada) {
-                navigation.navigate("ProductosScreen", {
-                    nombreCategoria: categoriaSeleccionada.nombre,
-                    productos: categoriaSeleccionada.productos
-                });
-            } else {
-                console.warn("Categoría no encontrada:", screenName);
-            }
-        };
-    
+        const categoriaSeleccionada = ProductosPorCategoria.find((cat) => cat.screen === screenName);
+        if (categoriaSeleccionada) {
+            navigation.navigate("ProductosScreen", {
+                nombreCategoria: categoriaSeleccionada.nombre,
+                productos: categoriaSeleccionada.productos
+            });
+        } else {
+            console.warn("Categoría no encontrada:", screenName);
+        }
+    };
+
     return (
         <LinearGradient colors={[colors.fondoClaro, colors.fondoOscuro]} style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -63,41 +53,44 @@ const HomeScreen = () => {
                     <TouchableOpacity style={styles.searchBox} onPress={() => navigation.navigate("PantallaBusqueda")}>
                         <Ionicons name="search" size={24} color="gray" style={styles.searchIcon} />
                         <Text style={{ color: "gray" }}>Buscar en Tienda Jero</Text>
-                        </TouchableOpacity>
+                    </TouchableOpacity>
 
                     <CarritoIcono
-                    cantidad={productosEnCarrito.length}
-                    onPress={() => navigation.navigate("CarritoCompras", { productos: productosEnCarrito})}
+                        cantidad={productosEnCarrito.length}
+                        onPress={() => navigation.navigate("CarritoCompras", { productos: productosEnCarrito })}
                     />
                 </View>
 
                 <View style={styles.carouselWrapper}>
                     <Carousel
-                    width={screenWidth}
-                    height={200}
-                    autoPlay
-                    loop
-                    data={carouselItems}
-                    scrollAnimationDuration={3000}
-                    onSnapToItem={(index) => setActiveIndex(index)}
-                    renderItem={({ item }) => (
-                        <View style={styles.carouselItemContainer}>
-                            <Image source={item.image} style={styles.carouselImage} />
-                            <View style={styles.dotContainer}>
-                                {carouselItems.map((_, i) => (
-                                    <View
-                                    key={i}
-                                    style={[styles.dot, activeIndex === i ? styles.activeDot : styles.inactiveDot,]}
-                                    />
-                                ))}
+                        width={screenWidth}
+                        height={200}
+                        autoPlay
+                        loop
+                        data={carouselItems}
+                        scrollAnimationDuration={3000}
+                        onSnapToItem={(index) => setActiveIndex(index)}
+                        renderItem={({ item }) => (
+                            <View style={styles.carouselItemContainer}>
+                                <Image source={item.image} style={styles.carouselImage} />
+                                <View style={styles.dotContainer}>
+                                    {carouselItems.map((_, i) => (
+                                        <View
+                                            key={i}
+                                            style={[
+                                                styles.dot,
+                                                activeIndex === i ? styles.activeDot : styles.inactiveDot
+                                            ]}
+                                        />
+                                    ))}
+                                </View>
                             </View>
-                        </View>
-                    )}
-                    /> 
+                        )}
+                    />
                 </View>
-                
+
                 <View style={styles.categoryHeader}>
-                    <Text style={styles.sectionTitle}>Tus categorias favoritas</Text>
+                    <Text style={styles.sectionTitle}>Tus categorías favoritas</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Categorias')}>
                         <Text style={styles.verMas}>Ver Más</Text>
                     </TouchableOpacity>
@@ -106,9 +99,9 @@ const HomeScreen = () => {
                 <View style={styles.gridContainer}>
                     {categories.map((item, index) => (
                         <TouchableOpacity
-                        key={index}
-                        style={styles.gridItem}
-                        onPress={() => goToCategory(item.screen)}
+                            key={index}
+                            style={styles.gridItem}
+                            onPress={() => goToCategory(item.screen)}
                         >
                             <MaterialCommunityIcons name={item.icon} size={45} color="black" />
                             <Text style={styles.categoryText}>{item.name}</Text>
@@ -117,8 +110,8 @@ const HomeScreen = () => {
                 </View>
             </ScrollView>
         </LinearGradient>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -131,8 +124,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 15,
-        paddingHorizontal: 10
-        
+        paddingHorizontal: 10,
     },
     searchBox: {
         flex: 1,
@@ -141,20 +133,20 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignItems: "center",
         paddingHorizontal: 10,
-        paddingVertical: 8
+        paddingVertical: 8,
     },
     searchIcon: {
-        marginRight: 5
+        marginRight: 5,
     },
     carouselWrapper: {
         position: "relative",
-        marginBottom: 20
+        marginBottom: 20,
     },
     carouselItemContainer: {
         backgroundColor: "#fff",
         borderRadius: 20,
         overflow: "hidden",
-        alignSelf: "center"
+        alignSelf: "center",
     },
     carouselImage: {
         width: screenWidth * 0.9,
@@ -166,7 +158,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginBottom: 10,
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
     },
     sectionTitle: {
         fontWeight: "bold",
@@ -183,7 +175,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     gridItem: {
-        width: '48%', 
+        width: '48%',
         marginBottom: 15,
         alignItems: 'center',
         backgroundColor: '#fff',
@@ -222,4 +214,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HomeScreen
+export default HomeScreen;

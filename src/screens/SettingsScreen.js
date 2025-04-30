@@ -8,24 +8,133 @@ import { LinearGradient } from "expo-linear-gradient";
 import EditModal from "../components/EditModal";
 import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
 import { showMessage } from "react-native-flash-message";
+import * as ImagePicker from 'expo-image-picker';
+import ModalImagePicker from "../components/ModalImagePicker";
+
 
 
 const SettingsScreen = () => {
     const navigation = useNavigation()
-    const { user } = useAuth()
+    const { user, setUser } = useAuth()
     const [isModalVisible, setModalVisible] = useState(false)
     const [modalTitle, setModalTitle] =useState("")
     const [fieldValue, setFieldValue] = useState("")
+    const defaultImage = 'https://cdn-icons-png.flaticon.com/512/6073/6073873.png';
+    const CLOUDINARY_URL = process.env.EXPO_PUBLIC_CLOUDDINARYURL
+    const UPLOAD_PRESET = process.env.EXPO_PUBLIC_UPLOAD_PRESET
+    const [isImageModalVisible, setImageModalVisible] = useState(false)
+    const [imageUri, setImageUri] = useState(null)
+
 
     const handleEdit = (field) => {
         setModalTitle(field)
-        setFieldValue (
-            field === 'Nombre' ? user?.displayName || '': 
-            field === 'Correo' ? user?.email || '' :
-            field === 'Contraseña' ? '' : ''
-        );
-        setModalVisible(true)
+        if (field === 'Foto de Perfil') {
+            setImageModalVisible(true)
+        } else {
+            setFieldValue (
+                field === 'Nombre' ? user?.displayName || '': 
+                field === 'Correo' ? user?.email || '' :
+                field === 'Contraseña' ? '' : ''
+            );
+            setModalVisible(true) 
+        }
     };
+
+    const HandleBack = () => {
+        navigation.goBack()
+    }
+
+    useEffect (() => {
+        if (user && user.photoURL){
+            setImageUri(user.photoURL)
+        } else {
+            setImageUri(defaultImage)
+        }
+    }, [user])
+
+    const uploadImage = async () => {
+        if (!user || !imageUri) {
+            console.error('Usuario o URI de imagen no validos:', { user, imageUri });
+            return;
+        }
+        try {
+            const formData = new FormData();
+            formData.append('file', {
+                uri: imageUri,
+                type: 'image/jpeg',
+                name: 'profile.jpg',
+            });
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            const response = await fetch(CLOUDINARY_URL, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.secure_url) {
+                await updateProfile(auth.currentUser, { photoURL: data.secure_url });
+                setUser({ ...user, photoURL: data.secure_url });
+                setImageUri(data.secure_url);
+                showMessage({
+                    message: 'Exito',
+                    description: 'Foto de perfil actualizada correctamente.',
+                    type: 'success',
+                });
+            } else {
+                throw new Error(data.error?.message || 'No se pudo obtener la URL de la imagen subida');
+            }
+        } catch (error) {
+            console.error('Error subiendo la imagen:', error);
+            showMessage({
+                message: 'Error',
+                description: error.message,
+                type: 'danger',
+            });
+        } finally {
+            setImageModalVisible(false);
+        }
+    };
+
+    const handleChooseImage = async () => {
+        try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if (status !== 'granted'){
+                showMessage({
+                    message: 'Permiso denegado',
+                    description: 'Se necesita permiso para acceder a la galeria.',
+                    type: 'danger',
+                });
+                return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1
+            });
+
+            if (result.canceled) {
+                showMessage({
+                    message: 'Cancelado',
+                    description: 'No se selecciono ninguna imagen.',
+                    type: 'info',
+                });
+                return;
+            }
+
+            setImageUri(result.assets[0].uri);
+        } catch (error) {
+            console.error('Error seleccionando la imagen:', error);
+            showMessage({
+                message: 'Error',
+                description: 'Ocurrio un error al intentar selecionar la imagen.',
+                type: 'danger',
+            });
+        }
+    }
 
     const handleSave = async () => {
         try {
@@ -50,6 +159,8 @@ const SettingsScreen = () => {
                     description: 'Contraseña actualizada correctamente.',
                     type: 'success',
                 });
+            } else if (modalTitle === 'Foto de Perfil'){
+                await uploadImage();
             }
         }catch(error){
             showMessage({
@@ -65,7 +176,19 @@ const SettingsScreen = () => {
 
     return (
         <LinearGradient colors={[colors.fondoClaro, colors.fondoOscuro]} style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={HandleBack}>
+                <Text style={styles.editButtonText}>Atras</Text>
+            </TouchableOpacity>
             <Text style={styles.subtitle}>Ajustes sobre tu cuenta</Text>
+           
+                <View style={styles.profileSection}>
+                    <Text style={styles.itemLabel}>Foto de Perfil</Text>
+                    <Image source={{uri: imageUri || defaultImage}} style={styles.profileImage} />
+                    <TouchableOpacity style={styles.editButton} onPress={() => handleEdit("Foto de Perfil")}>
+                        <Text style={styles.editButtonText}>Cambiar</Text>
+                    </TouchableOpacity>
+                </View>
+        
             <View style={styles.row}>
                 <View style={styles.info}>
                     <Text style={styles.label}>Nombre</Text>
@@ -98,7 +221,17 @@ const SettingsScreen = () => {
             title={modalTitle}
             value={fieldValue}
             onChangeText={setFieldValue}
-            onSave={handleSave} onCancel={() => setModalVisible(false)}/>
+            onSave={handleSave} 
+            onCancel={() => setModalVisible(false)}/>
+
+            <ModalImagePicker 
+            visible={isImageModalVisible}
+            imageUri={imageUri}
+            onChooseImage={handleChooseImage}
+            onSave={uploadImage}
+            onCancel={() => setImageModalVisible(false)}
+            />
+
         </LinearGradient>
     )
 }
@@ -152,6 +285,41 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 14,
         fontWeight: "bold",
+    },
+    profileSection: {
+        alignItems: 'center',
+        marginBottom: 30,
+        justifyContent: "center",
+        backgroundColor: 'transparent',
+        paddingVertical: 20
+    },
+    profileImage: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        borderWidth: 2,
+        marginBottom: 15,
+        backgroundColor: '#ccc',
+    },
+    itemLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'black',
+        marginBottom: 10,
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        padding: 10,
+        backgroundColor: '#007bff',
+        borderRadius: 5,
+        zIndex: 1,
+    },
+    editButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 })
 

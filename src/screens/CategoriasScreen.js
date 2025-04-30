@@ -6,6 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import colors from "../constants/colors";
 import CarritoIcono from "../components/CarritoIcono";
 import { ProductosPorCategoria } from "../constants/ProductosPorCategoria";
+import { useFocusEffect } from "@react-navigation/native";
 
 const categorias = [
     { name: 'Carne', icon: 'cow', screen: 'Carne'},
@@ -37,6 +38,12 @@ const CategoriasScreen = () => {
 
     const filteredCategories = categorias.filter((item) => 
     item.name.toLowerCase().includes(searchText.toLowerCase()));
+
+    useFocusEffect(
+        React.useCallback(() => {
+            setSearchText(''); 
+        }, [])
+    );
 
     const goToCategory = (screenName) => {
         const categoriaSeleccionada = ProductosPorCategoria.find((cat) => cat.screen === screenName);

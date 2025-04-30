@@ -13,6 +13,7 @@ import RegisterScreen from "../screens/auth/RegisterScreen";
 import CarritoCompras from "../screens/CarritoCompras";
 import PantallaBusqueda from "../screens/PantallaBusqueda";
 import ProductosScreen from "../screens/ProductosScreen";
+import NotificacionScreen from "../screens/NotificacionScreen";
 
 
 import App from "../../App";
@@ -32,6 +33,8 @@ const TabNavigator = () => {
             iconName = "home-outline"
         }else if (route.name==="Categorias"){
             iconName = "menu-outline"
+        }else if (route.name==="Notificaciones"){
+            iconName = "notifications-circle-outline"
         }
         return <Ionicons name={iconName} size={size}/>},
         tabBarActiveColor: "#ffff",
@@ -41,6 +44,7 @@ const TabNavigator = () => {
         
         <Tab.Screen name="Home" component={HomeScreen} options={{}}/>
         <Tab.Screen name="Categorias" component={CategoriasScreen} options={{}}/>
+        <Tab.Screen name="Notificaciones" component={NotificacionScreen} options={{}}/>
         <Tab.Screen name="Mi Cuenta" component={MiCuentaScreen} options={{}}/>
     </Tab.Navigator>)
 }
