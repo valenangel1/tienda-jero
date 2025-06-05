@@ -1,11 +1,23 @@
-import React, {use, useState} from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
+import React, { useState } from "react";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    Image,
+    Alert,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import colors from "../../constants/colors"
-import { auth } from '../../services/firebaseConfig'
+import colors from "../../constants/colors";
+import { auth } from '../../services/firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
+
 const RegisterScreen = () => {
     const navigation = useNavigation();
     const [name, setName] = useState("");
@@ -23,7 +35,7 @@ const RegisterScreen = () => {
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!user || !emailRegex.test(user)) {
-            Alert.alert("Error", "Ingrese un correo electrónico valido.");
+            Alert.alert("Error", "Ingrese un correo electrónico válido.");
             return false;
         }
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -32,74 +44,82 @@ const RegisterScreen = () => {
             return false;
         }
         return true;
-    }
+    };
 
     const handlerRegister = () => {
-        if (!validateInputs()) {
-            return;
-        }
-        
-        createUserWithEmailAndPassword(auth, user, password)
-        .then((userCredencials) => {
-            const user = userCredencials.user
+        if (!validateInputs()) return;
 
-            updateProfile(user, {
-                displayName : name,
-            }).then(() => {
-                setSuccess(true);
-                setTimeout(() => {
-                    console.log("🔄️ Redirigiendo a Login...")
-                    navigation.navigate("Login")
-                }, 2000);
-            }).catch((error) => {
-                setError(true)
-                setErrorMessage(error.message)
+        createUserWithEmailAndPassword(auth, user, password)
+            .then((userCredencials) => {
+                const user = userCredencials.user;
+
+                updateProfile(user, {
+                    displayName: name,
+                }).then(() => {
+                    setSuccess(true);
+                    setTimeout(() => {
+                        navigation.navigate("Login");
+                    }, 2000);
+                }).catch((error) => {
+                    setError(true);
+                    setErrorMessage(error.message);
+                });
             })
-        })
-        .catch((error) => {
-            setError(true)
-            setErrorMessage(error.message);
-        })
+            .catch((error) => {
+                setError(true);
+                setErrorMessage(error.message);
+            });
     };
 
     return (
-        <LinearGradient colors={[colors.fondoClaro, colors.fondoOscuro]} style={styles.container}>
-            <Image source={require("../../../assets/logo.png")} style={styles.logo} resizeMode="contain"/>
-            <Text style={styles.title}>Registro</Text>
-            <TextInput 
-            style={styles.input} 
-            placeholder="Nombre y Apellido" 
-            value={name} 
-            onChangeText={setName}
-            />
-            <TextInput
-            style={styles.input}
-            placeholder="Correo Electronico"
-            keyboardType="email-address"
-            value={user}
-            onChangeText={setUser}
-            />
-            <View style={styles.passwordContainer}>
-                <TextInput 
-                style={styles.passwordInput}
-                placeholder="Contraseña"
-                secureTextEntry={secureText}
-                value={password}
-                onChangeText={setPassword}
-                />
-            <TouchableOpacity onPress={() => setSecureText(!secureText)}>
-                <Ionicons name={secureText ? "eye-off" : "eye"} size={24} color="gray"/>
-            </TouchableOpacity>
-            </View>
-            {error && ( <Text style={styles.error}>{errorMessage}</Text>)}
-            {success && <Text style={styles.success}>Registro exitoso. Redirigiendo...</Text>}
-            <TouchableOpacity style={styles.button} onPress={handlerRegister}>
-                <Text style={styles.buttonText}>Crear Cuenta</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text style={styles.link}>¿Ya tienes cuenta? Iniciar sesion</Text>
-            </TouchableOpacity>
-        </LinearGradient>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <LinearGradient colors={[colors.fondoClaro, colors.fondoOscuro]} style={styles.container}>
+                    <Image source={require("../../../assets/logo.png")} style={styles.logo} resizeMode="contain" />
+                    <Text style={styles.title}>Registro</Text>
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Nombre y Apellido"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Correo Electrónico"
+                        keyboardType="email-address"
+                        value={user}
+                        onChangeText={setUser}
+                    />
+                    <View style={styles.passwordContainer}>
+                        <TextInput
+                            style={styles.passwordInput}
+                            placeholder="Contraseña"
+                            secureTextEntry={secureText}
+                            value={password}
+                            onChangeText={setPassword}
+                        />
+                        <TouchableOpacity onPress={() => setSecureText(!secureText)}>
+                            <Ionicons name={secureText ? "eye-off" : "eye"} size={24} color="gray" />
+                        </TouchableOpacity>
+                    </View>
+
+                    {error && <Text style={styles.error}>{errorMessage}</Text>}
+                    {success && <Text style={styles.success}>Registro exitoso. Redirigiendo...</Text>}
+
+                    <TouchableOpacity style={styles.button} onPress={handlerRegister}>
+                        <Text style={styles.buttonText}>Crear Cuenta</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                        <Text style={styles.link}>¿Ya tienes cuenta? Iniciar sesión</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -108,7 +128,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f8f9fa"
+        paddingHorizontal: 20,
     },
     title: {
         fontSize: 22,
@@ -154,17 +174,17 @@ const styles = StyleSheet.create({
     },
     error: {
         color: "red",
-        marginBottom: 10 
+        marginBottom: 10
     },
     success: {
         color: "green",
         marginBottom: 10
     },
     logo: {
-        width:200,
-        height:200,
+        width: 200,
+        height: 200,
         marginBottom: 20,
     }
 });
 
-export default RegisterScreen
+export default RegisterScreen;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "11557387773",
+    "project_id": "proyecto-app-tienda-jero",
+    "storage_bucket": "proyecto-app-tienda-jero.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11557387773:android:eb1ae92d36a5ac8d986d94",
+        "android_client_info": {
+          "package_name": "com.tiendajero"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNImfiFgjHtYz8-P-9JcLLpI48wRKuiNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

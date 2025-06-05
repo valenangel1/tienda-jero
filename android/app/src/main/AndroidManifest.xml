@@ -27,6 +27,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="com.anonymous.tiendajero"/>
+        <data android:scheme="exp+tienda-jero"/>
       </intent-filter>
     </activity>
   </application>

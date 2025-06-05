@@ -13,11 +13,12 @@ import RegisterScreen from "../screens/auth/RegisterScreen";
 import CarritoCompras from "../screens/CarritoCompras";
 import PantallaBusqueda from "../screens/PantallaBusqueda";
 import ProductosScreen from "../screens/ProductosScreen";
-import NotificacionScreen from "../screens/NotificacionScreen";
+
 
 
 import App from "../../App";
 import SettingsScreen from "../screens/SettingsScreen";
+import PagoScreen from "../screens/PagoScreen";
 
 
 
@@ -33,8 +34,6 @@ const TabNavigator = () => {
             iconName = "home-outline"
         }else if (route.name==="Categorias"){
             iconName = "menu-outline"
-        }else if (route.name==="Notificaciones"){
-            iconName = "notifications-circle-outline"
         }
         return <Ionicons name={iconName} size={size}/>},
         tabBarActiveColor: "#ffff",
@@ -44,7 +43,6 @@ const TabNavigator = () => {
         
         <Tab.Screen name="Home" component={HomeScreen} options={{}}/>
         <Tab.Screen name="Categorias" component={CategoriasScreen} options={{}}/>
-        <Tab.Screen name="Notificaciones" component={NotificacionScreen} options={{}}/>
         <Tab.Screen name="Mi Cuenta" component={MiCuentaScreen} options={{}}/>
     </Tab.Navigator>)
 }
@@ -58,6 +56,7 @@ const AppNavigator = () => {
             <stack.Screen name="CarritoCompras" component={CarritoCompras} options={{headerShown: false}}/>
             <stack.Screen name="PantallaBusqueda" component={PantallaBusqueda} options={{headerShown: false}}/>
             <stack.Screen name="ProductosScreen" component={ProductosScreen} options={{headerShown: false}}/>
+            <stack.Screen name="PagoScreen" component={PagoScreen} options={{headerShown: false}}/>
             <stack.Screen name="Settings" component={SettingsScreen} options={{headerShown: false}}/>
             <stack.Screen name="MainTabs" component={TabNavigator} options={{headerShown: false}}/>
         </stack.Navigator>

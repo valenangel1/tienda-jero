@@ -5,8 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -23,9 +21,6 @@
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
@@ -36,6 +31,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5b7d2a28-847e-4ef2-a4ca-a763aff0b55b"
+      }
+    },
+    "owner": "valentina.correa54"
   }
 }
